@@ -1,0 +1,179 @@
+{
+  "name": "Lead Management Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-form",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "173659b0-b336-45df-816e-5a68e53319ae",
+      "name": "Receive Lead",
+      "webhookId": "661abe5b-b4e6-4707-8c14-617e1629821d"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1qAdzB_WZZkD9v0yAlsqXT6qMPUE5NKVE2hylf_rAoCY/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.body.name }}",
+            "Email": "={{ $json.body.email }}",
+            "Messege": "={{ $json.body.message }}",
+            "Content": "={{ $json.body.Content }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Messege",
+              "displayName": "Messege",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "1331578d-c581-4996-a5f3-29f4a4e5659d",
+      "name": "Save Lead to Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "rdSOJuwb1CTJKcUb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "={{ $json.Messege }}",
+        "emailType": "text",
+        "message": "={{ $json.Content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "bea10092-62b2-4149-aa83-36a945a2af65",
+      "name": "Send Email Notification",
+      "webhookId": "505663f4-6459-43fb-8114-83bed7136c09",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dHKfbh21QoC74GLG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Lead Automation Flow\n\n1. Receive lead from webhook\n2. Save lead into Google Sheets\n3. Send notification email"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        464,
+        176
+      ],
+      "typeVersion": 1,
+      "id": "92b9fa2a-79b6-4da8-94fe-01430fe61d53",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Receive Lead": {
+      "main": [
+        [
+          {
+            "node": "Save Lead to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Lead to Sheet": {
+      "main": [
+        [
+          {
+            "node": "Send Email Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "28f02d0c-71b0-4700-b368-9fcb7ec23419",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a1b7613156ff7b6ffd3edd7290c74b69b3b6d4e3231adee2af6e8a5fb2d7c6a9"
+  },
+  "id": "QAd29NRBpghPNOHH",
+  "tags": []
+}
